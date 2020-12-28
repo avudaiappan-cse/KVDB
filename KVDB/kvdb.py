@@ -96,11 +96,6 @@ class KVDB:
         with open(self.path) as f:
             self.cache = json.load(f)
 
-    # def set(self, key, value):
-    #     t1 = Thread(target=(self.setHelper), args=(key, value,))
-    #     t1.daemon = True
-    #     t1.start()
-
     def set(self, key, value):
         '''
         Avoiding unexpected delete of data
@@ -156,11 +151,6 @@ class KVDB:
             else:
                 raise KeyExistError
 
-    # def get(self, key):
-    #     t2 = Thread(target=(self.getHelper), args=(key,))
-    #     t2.daemon = True
-    #     t2.start()
-
     def get(self, key):
         '''
         Avoiding unexpected delete of data
@@ -179,11 +169,6 @@ class KVDB:
             print(bcolors.OKBLUE + json.dumps(data.get(key)) + bcolors.ENDC)
         else:
             raise KeyNotExistError
-
-    # def remove(self, key):
-    #     t3 = Thread(target=(self.removeHelper), args=(key,))
-    #     t3.daemon = True
-    #     t3.start()
 
     def remove(self, key):
         '''

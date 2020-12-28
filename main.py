@@ -22,23 +22,6 @@ default_path = os.getcwd()
 dbpath = sys.argv[1] if len(sys.argv) > 1 else default_path
 file_path = dbpath + "\\localDB\\database.json"
 
-# Checking file exist or not, if not create one
-# Entering invalid path exits the app
-# if not os.path.exists(dbpath + "\\localDB"):
-#     try:
-#         os.mkdir(dbpath + "\\localDB")
-#     except NotImplementedError:
-#         print("Oops not work on your platform")
-
-# Locking the file to prevent using of same db file
-# try:
-#     lock = FileLock(file_path + ".lock")
-#     lock.acquire()
-# except Exception as fe:
-#     print(bcolors.WARNING +
-#           "Another file using the DB, try with another database" + bcolors.ENDC)
-#     sys.exit()
-
 
 try:
     db = KVDB.kvdb.KVDB(dbpath)
@@ -56,17 +39,14 @@ while True:
             t1 = Thread(target=(db.set), args=(key, value,))
             t1.daemon = True
             t1.start()
-            # db.set(key, value)
         except Exception as e:
             pass
-            # print(bcolors.FAIL, e, bcolors.ENDC)
     elif option == "read":
         try:
             key = input("Enter Key: ")
             t2 = Thread(target=(db.get), args=(key,))
             t2.daemon = True
             t2.start()
-            # db.get(key)
         except Exception as e:
             print(bcolors.FAIL, e, bcolors.ENDC)
     elif option == "delete":
@@ -75,7 +55,6 @@ while True:
             t3 = Thread(target=(db.remove), args=(key,))
             t3.daemon = True
             t3.start()
-            # db.remove(key)
         except Exception as e:
             print(bcolors.FAIL, e, bcolors.ENDC)
     elif option == "exit":
