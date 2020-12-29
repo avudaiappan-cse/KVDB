@@ -3,7 +3,7 @@ import os
 import time
 import sys
 from filelock import FileLock
-from threading import Thread, activeCount
+from threading import Thread, Lock
 
 
 class bcolors:
@@ -87,7 +87,7 @@ class KVDB:
         to prevent access the same database
         '''
         try:
-            self.lock = FileLock(self.path + ".lock")
+            self.lock = FileLock(self.path)
             self.lock.acquire()
         except Exception as fe:
             print(bcolors.WARNING +
@@ -95,8 +95,21 @@ class KVDB:
             sys.exit()
         with open(self.path) as f:
             self.cache = json.load(f)
+        self.thread_lock = Lock()
 
     def set(self, key, value):
+        t1 = Thread(target=(self.setWrapper), args=(key, value,))
+        t1.daemon = True
+        t1.start()
+
+    def setWrapper(self, key, value):
+        with self.thread_lock:
+            try:
+                self.setHelper(key, value)
+            except:
+                pass
+
+    def setHelper(self, key, value):
         '''
         Avoiding unexpected delete of data
         reproducing file by cache data
@@ -152,6 +165,18 @@ class KVDB:
                 raise KeyExistError
 
     def get(self, key):
+        self.t2 = Thread(target=(self.getWrapper), args=(key,))
+        self.t2.daemon = True
+        self.t2.start()
+
+    def getWrapper(self, key):
+        with self.thread_lock:
+            try:
+                self.getHelper(key)
+            except:
+                pass
+
+    def getHelper(self, key):
         '''
         Avoiding unexpected delete of data
         reproducing file by cache data
@@ -171,6 +196,18 @@ class KVDB:
             raise KeyNotExistError
 
     def remove(self, key):
+        t3 = Thread(target=(self.removeWrapper), args=(key,))
+        t3.daemon = True
+        t3.start()
+
+    def removeWrapper(self, key):
+        with self.thread_lock:
+            try:
+                self.removeHelper(key)
+            except:
+                pass
+
+    def removeHelper(self, key):
         '''
         Avoiding unexpected delete of data
         reproducing file by cache data
