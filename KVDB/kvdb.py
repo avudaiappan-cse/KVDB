@@ -110,6 +110,7 @@ class KVDB:
                 pass
 
     def setHelper(self, key, value):
+        time.sleep(10)
         '''
         Avoiding unexpected delete of data
         reproducing file by cache data
